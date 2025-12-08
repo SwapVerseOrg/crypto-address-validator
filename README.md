@@ -20,6 +20,7 @@ A lightweight and comprehensive JavaScript/TypeScript library for validating cry
 - **Ripple (XRP)** - Custom Base58 alphabet
 - **Bitcoin Cash (BCH)** - CashAddr and Legacy
 - **Litecoin (LTC)** - Legacy and SegWit
+- **Liquid Network (LBTC, LIQUID)** - Sidechain with Confidential Transactions
 - **Cardano (ADA)** - Shelley and Byron
 - **Dogecoin (DOGE)** - Standard addresses
 - **Polkadot (DOT)** - SS58 format
@@ -49,6 +50,11 @@ console.log(eth);
 const sol = validate('4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T', 'SOL');
 console.log(sol);
 // Output: { isValid: true, network: 'mainnet', network_name: 'Solana Mainnet' }
+
+// Liquid Network
+const lbtc = validate('H8JgLKDq5KHdKzFbHzfYAy5YrZvF3LZXE9', 'LBTC');
+console.log(lbtc);
+// Output: { isValid: true, network: 'mainnet', network_name: 'Liquid Network Mainnet' }
 
 // Invalid address
 const invalid = validate('invalid-address', 'BTC');

@@ -9,6 +9,18 @@ const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 const GENERATOR = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 
 /**
+ * Blech32 generator values (used for Liquid confidential addresses)
+ * Blech32 uses a 40-bit checksum instead of 30-bit
+ */
+const BLECH32_GENERATOR = [
+    0x7f77850b5,
+    0x5f5c7c5a9,
+    0x6e6e0a819,
+    0x2b5432f1f,
+    0x169199f87,
+];
+
+/**
  * Polymod for Bech32 checksum
  */
 function polymod(values: number[]): number {
@@ -19,6 +31,23 @@ function polymod(values: number[]): number {
         for (let i = 0; i < 5; i++) {
             if ((top >> i) & 1) {
                 chk ^= GENERATOR[i];
+            }
+        }
+    }
+    return chk;
+}
+
+/**
+ * Polymod for Blech32 checksum (Liquid Network confidential addresses)
+ */
+function polymodBlech32(values: number[]): number {
+    let chk = 1;
+    for (const value of values) {
+        const top = chk >> 35;
+        chk = ((chk & 0x7ffffffff) << 5) ^ value;
+        for (let i = 0; i < 5; i++) {
+            if ((top >> i) & 1) {
+                chk ^= BLECH32_GENERATOR[i];
             }
         }
     }
@@ -115,6 +144,44 @@ export function verifyBech32mChecksum(
 
         const values = hrpExpand(hrp).concat(data);
         return polymod(values) === BECH32M_CONST;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Verify Blech32 checksum (used for Liquid Network confidential addresses)
+ * Blech32 uses a longer checksum (12 characters) and different polymod
+ */
+export function verifyBlech32Checksum(
+    address: string,
+    expectedHrp: string,
+): boolean {
+    try {
+        const lowerAddress = address.toLowerCase();
+        const pos = lowerAddress.lastIndexOf('1');
+
+        if (
+            pos < 1 ||
+            pos + 13 > lowerAddress.length || // Blech32 has 12-char checksum
+            lowerAddress.length > 1000 // Confidential addresses can be very long
+        ) {
+            return false;
+        }
+
+        const hrp = lowerAddress.substring(0, pos);
+        if (hrp !== expectedHrp) return false;
+
+        const data: number[] = [];
+        for (let i = pos + 1; i < lowerAddress.length; i++) {
+            const char = lowerAddress[i];
+            const value = CHARSET.indexOf(char);
+            if (value === -1) return false;
+            data.push(value);
+        }
+
+        const values = hrpExpand(hrp).concat(data);
+        return polymodBlech32(values) === 1;
     } catch {
         return false;
     }

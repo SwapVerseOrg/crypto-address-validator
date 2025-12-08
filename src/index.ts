@@ -5,6 +5,7 @@ import { validateCardano } from './validators/cardano.js';
 import { validateDogecoin } from './validators/dogecoin.js';
 import { validateEthereum } from './validators/ethereum.js';
 import { validateLitecoin } from './validators/litecoin.js';
+import { validateLiquid } from './validators/liquid.js';
 import { validatePolkadot } from './validators/polkadot.js';
 import { validatePolygon } from './validators/polygon.js';
 import { validateRipple } from './validators/ripple.js';
@@ -45,6 +46,10 @@ const NETWORK_VALIDATORS: Record<
     // Litecoin Network
     LTC: validateLitecoin,
     LITECOIN: validateLitecoin,
+
+    // Liquid Network
+    LBTC: validateLiquid,
+    LIQUID: validateLiquid,
 
     // Dogecoin Network
     DOGE: validateDogecoin,
