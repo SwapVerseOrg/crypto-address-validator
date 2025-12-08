@@ -1,6 +1,6 @@
 import { ValidationResult } from '../types.js';
 import { base58Decode, verifyBase58Check } from '../utils/base58.js';
-import { verifyBech32Checksum } from '../utils/bech32.js';
+import { verifyBech32Checksum, verifyBech32mChecksum } from '../utils/bech32.js';
 
 /**
  * Validate Bitcoin address
@@ -69,7 +69,7 @@ export function validateBitcoin(address: string): ValidationResult {
 
     // Taproot (Bech32m) - bc1p for mainnet (P2TR)
     if (/^bc1p[a-z0-9]{58}$/i.test(address)) {
-        if (verifyBech32Checksum(address, 'bc')) {
+        if (verifyBech32mChecksum(address, 'bc')) {
             return {
                 isValid: true,
                 network: 'mainnet',
@@ -91,7 +91,7 @@ export function validateBitcoin(address: string): ValidationResult {
 
     // Taproot (Bech32m) - tb1p for testnet (P2TR)
     if (/^tb1p[a-z0-9]{58}$/i.test(address)) {
-        if (verifyBech32Checksum(address, 'tb')) {
+        if (verifyBech32mChecksum(address, 'tb')) {
             return {
                 isValid: true,
                 network: 'testnet',

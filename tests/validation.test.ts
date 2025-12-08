@@ -21,6 +21,13 @@ test('Bitcoin - Valid mainnet addresses', () => {
     );
     assert.strictEqual(result3.isValid, true);
     assert.strictEqual(result3.network, 'mainnet');
+
+    const result4 = validate(
+        'bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9',
+        'BTC',
+    );
+    assert.strictEqual(result4.isValid, true);
+    assert.strictEqual(result4.network, 'mainnet');
 });
 
 test('Bitcoin - Invalid addresses', () => {

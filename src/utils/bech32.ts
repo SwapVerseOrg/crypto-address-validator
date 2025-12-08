@@ -41,6 +41,12 @@ function hrpExpand(hrp: string): number[] {
 }
 
 /**
+ * Bech32 and Bech32m encoding constants
+ */
+const BECH32_CONST = 1;
+const BECH32M_CONST = 0x2bc830a3;
+
+/**
  * Verify Bech32 checksum
  */
 export function verifyBech32Checksum(
@@ -71,7 +77,44 @@ export function verifyBech32Checksum(
         }
 
         const values = hrpExpand(hrp).concat(data);
-        return polymod(values) === 1;
+        return polymod(values) === BECH32_CONST;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Verify Bech32m checksum (used for Taproot addresses)
+ */
+export function verifyBech32mChecksum(
+    address: string,
+    expectedHrp: string,
+): boolean {
+    try {
+        const lowerAddress = address.toLowerCase();
+        const pos = lowerAddress.lastIndexOf('1');
+
+        if (
+            pos < 1 ||
+            pos + 7 > lowerAddress.length ||
+            lowerAddress.length > 90
+        ) {
+            return false;
+        }
+
+        const hrp = lowerAddress.substring(0, pos);
+        if (hrp !== expectedHrp) return false;
+
+        const data: number[] = [];
+        for (let i = pos + 1; i < lowerAddress.length; i++) {
+            const char = lowerAddress[i];
+            const value = CHARSET.indexOf(char);
+            if (value === -1) return false;
+            data.push(value);
+        }
+
+        const values = hrpExpand(hrp).concat(data);
+        return polymod(values) === BECH32M_CONST;
     } catch {
         return false;
     }
