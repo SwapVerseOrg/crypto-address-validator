@@ -1,0 +1,57 @@
+{
+    "name": "@swapverse/crypto-address-validator",
+    "authors": [
+        {
+            "name": "SwapVerse",
+            "email": "support@swapverse.org"
+        }
+    ],
+    "version": "1.0.0",
+    "description": "Comprehensive cryptocurrency address validation library with support for multiple networks",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "test": "tsx --test tests/*.test.ts",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "cryptocurrency",
+        "crypto",
+        "address",
+        "validation",
+        "validator",
+        "bitcoin",
+        "ethereum",
+        "litecoin",
+        "ripple",
+        "cardano",
+        "solana",
+        "blockchain"
+    ],
+    "author": "",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SwapVerseOrg/crypto-address-validator"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "tsx": "^4.21.0",
+        "typescript": "^5.3.0"
+    }
+}
