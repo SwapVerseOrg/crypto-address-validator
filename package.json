@@ -6,7 +6,7 @@
             "email": "support@swapverse.org"
         }
     ],
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Comprehensive cryptocurrency address validation library with support for multiple networks",
     "type": "module",
     "main": "./dist/index.js",
