@@ -24,30 +24,7 @@ export function validateLiquid(address: string): ValidationResult {
     // Standard addresses: ~42-90 chars (Bech32)
     // Confidential addresses: ~90-120 chars (Blech32 - longer checksum)
     if (/^lq1[a-z0-9]{38,120}$/i.test(address)) {
-        const lowerAddr = address.toLowerCase();
-        
-        // Confidential addresses (longer format)
-        // Accept if format is correct - Blech32 uses 40-bit checksum (12 chars)
-        if (address.length >= 90) {
-            // Basic structure validation for confidential addresses
-            // They use Blech32 encoding which has a longer checksum
-            return {
-                isValid: true,
-                network: 'mainnet',
-                network_name: 'Liquid Network Mainnet (Confidential)',
-            };
-        }
-        
-        // Standard non-confidential addresses (shorter, use Bech32)
-        if (verifyBech32Checksum(address, 'lq')) {
-            return {
-                isValid: true,
-                network: 'mainnet',
-                network_name: 'Liquid Network Mainnet',
-            };
-        }
-        
-        // If Bech32 validation fails but format looks correct, try Blech32
+        // Try Blech32 first (for confidential addresses - longer format)
         if (verifyBlech32Checksum(address, 'lq')) {
             return {
                 isValid: true,
@@ -55,34 +32,34 @@ export function validateLiquid(address: string): ValidationResult {
                 network_name: 'Liquid Network Mainnet (Confidential)',
             };
         }
+        
+        // Try standard Bech32 (for non-confidential addresses)
+        if (verifyBech32Checksum(address, 'lq')) {
+            return {
+                isValid: true,
+                network: 'mainnet',
+                network_name: 'Liquid Network Mainnet',
+            };
+        }
     }
 
     // Native SegWit/Confidential - tlq1 for testnet
     if (/^tlq1[a-z0-9]{38,120}$/i.test(address)) {
-        // Confidential addresses (longer format)
-        if (address.length >= 90) {
-            return {
-                isValid: true,
-                network: 'testnet',
-                network_name: 'Liquid Network Testnet (Confidential)',
-            };
-        }
-        
-        // Standard Bech32
-        if (verifyBech32Checksum(address, 'tlq')) {
-            return {
-                isValid: true,
-                network: 'testnet',
-                network_name: 'Liquid Network Testnet',
-            };
-        }
-        
-        // Try Blech32
+        // Try Blech32 first
         if (verifyBlech32Checksum(address, 'tlq')) {
             return {
                 isValid: true,
                 network: 'testnet',
                 network_name: 'Liquid Network Testnet (Confidential)',
+            };
+        }
+        
+        // Try standard Bech32
+        if (verifyBech32Checksum(address, 'tlq')) {
+            return {
+                isValid: true,
+                network: 'testnet',
+                network_name: 'Liquid Network Testnet',
             };
         }
     }

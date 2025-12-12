@@ -10,14 +10,15 @@ const GENERATOR = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 
 /**
  * Blech32 generator values (used for Liquid confidential addresses)
- * Blech32 uses a 40-bit checksum instead of 30-bit
+ * Blech32 uses a 60-bit checksum (12 chars) instead of 30-bit (6 chars)
+ * Source: https://github.com/ElementsProject/elements/blob/main/src/blech32.cpp
  */
 const BLECH32_GENERATOR = [
-    0x7f77850b5,
-    0x5f5c7c5a9,
-    0x6e6e0a819,
-    0x2b5432f1f,
-    0x169199f87,
+    0x7d52fba40bd886n,
+    0x5e8dbf1a03950cn,
+    0x1c3a3c74072a18n,
+    0x385d72fa0e5139n,
+    0x7093e5a608865bn,
 ];
 
 /**
@@ -39,12 +40,13 @@ function polymod(values: number[]): number {
 
 /**
  * Polymod for Blech32 checksum (Liquid Network confidential addresses)
+ * Blech32 uses a 60-bit internal state (vs 30-bit for Bech32)
  */
-function polymodBlech32(values: number[]): number {
-    let chk = 1;
+function polymodBlech32(values: number[]): bigint {
+    let chk = 1n; // Use BigInt for 60-bit calculations
     for (const value of values) {
-        const top = chk >> 35;
-        chk = ((chk & 0x7ffffffff) << 5) ^ value;
+        const top = Number(chk >> 55n); // 60-5 = 55
+        chk = ((chk & 0x7fffffffffffffn) << 5n) ^ BigInt(value); // Mask to 55 bits
         for (let i = 0; i < 5; i++) {
             if ((top >> i) & 1) {
                 chk ^= BLECH32_GENERATOR[i];
@@ -181,7 +183,7 @@ export function verifyBlech32Checksum(
         }
 
         const values = hrpExpand(hrp).concat(data);
-        return polymodBlech32(values) === 1;
+        return polymodBlech32(values) === 1n;
     } catch {
         return false;
     }
