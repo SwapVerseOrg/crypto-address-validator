@@ -1,19 +1,11 @@
-import { createHash } from 'crypto';
+import { keccak_256 } from '@noble/hashes/sha3.js';
 
 /**
  * Keccak-256 hash function for Ethereum addresses
- * Using keccak256 from a proper implementation
+ * Using keccak256 from @noble/hashes
  */
 export function keccak256(data: Uint8Array): Uint8Array {
-    // Node.js crypto doesn't have keccak256, only SHA3-256
-    // For now, we'll use a simpler validation approach
-    // In production, you'd want to add a proper keccak256 library
-
-    // Create a simple hash for basic validation
-    // This is a placeholder - for production use, add @noble/hashes or similar
-    const hash = createHash('sha3-256');
-    hash.update(data);
-    return new Uint8Array(hash.digest());
+    return keccak_256(data);
 }
 
 /**

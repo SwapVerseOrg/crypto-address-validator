@@ -18,6 +18,15 @@ test('Ethereum - Valid addresses', () => {
         'ETH',
     );
     assert.strictEqual(result2.isValid, true);
+
+    // Endereço com checksum EIP-55
+    const result3 = validate(
+        '0xfE4bF92DBa94090E64f5EC571182721B7f16d859',
+        'ETH',
+    );
+    assert.strictEqual(result3.isValid, true);
+    assert.strictEqual(result3.network, 'mainnet');
+    assert.ok(result3.network_name?.includes('Ethereum'));
 });
 
 test('Ethereum - Invalid addresses', () => {
